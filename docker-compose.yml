@@ -27,6 +27,18 @@ services:
     depends_on:
         - app
 
+  redis:
+    container_name: "yampi_test_redis"
+    image: redis:alpine
+    command: redis-server /usr/local/etc/redis/redis.conf --requirepass secret
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - $PWD/redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+        - yampi
+
   db:
     image: mariadb:10.2
     container_name: yampi_test_db

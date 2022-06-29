@@ -8,6 +8,7 @@ use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Services\SearchProductService;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends Controller
@@ -22,7 +23,16 @@ class ProductController extends Controller
      */
     public function index(){
         try {
-            return ProductResource::collection(Product::all());
+            
+            if(Cache::has('registered_products')){
+                return Cache::get('registered_products');
+            }
+
+            $products = ProductResource::collection(Product::all());
+            Cache::put('registered_products', $products, 60);
+
+            return $products;
+            
         } catch (\Throwable $th) {
             return $this->returnGenericError($th);
         }
@@ -74,6 +84,8 @@ class ProductController extends Controller
         try {
 
             $product = Product::create($request->only('name','price','description','category','image_url'));
+            Cache::forget('registered_products');
+
             return response(new ProductResource($product), Response::HTTP_CREATED);
 
         } catch (\Throwable $th) {
@@ -92,6 +104,8 @@ class ProductController extends Controller
         try {
 
             $product->update($request->only('name','price','description','category','image_url'));
+            Cache::forget('registered_products');
+
             return response(new ProductResource($product), Response::HTTP_ACCEPTED);
 
         } catch (\Throwable $th) {
@@ -110,6 +124,8 @@ class ProductController extends Controller
         try {
 
             $product->delete();
+            Cache::forget('registered_products');
+            
             return response(null, Response::HTTP_NO_CONTENT);
             
         } catch (\Throwable $th) {

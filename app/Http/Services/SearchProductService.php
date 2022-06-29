@@ -42,20 +42,24 @@ class SearchProductService extends Model{
         }
 
         if($this->entry->name != ""){
-            $select .= " AND name = '".$this->entry->name."' ";
+            $select .= " AND name = '".$this->formatFieldToQuery($this->entry->name)."' ";
         }
 
         if($this->entry->category != ""){
-            $select .= " AND category = '".$this->entry->category."' ";
+            $select .= " AND category = '".$this->formatFieldToQuery($this->entry->category)."' ";
         }
 
         if($this->entry->with_image == 1){
-            $select .= " AND image_url <> '' ";
+            $select .= " AND IFNULL(image_url,'') <> '' ";
         }else if($this->entry->with_image == 0){
-            $select .= " AND image_url = '' ";
+            $select .= " AND IFNULL(image_url,'') = '' ";
         }
 
         return $select;
+    }
+
+    private function formatFieldToQuery($str){
+        return str_replace("'","\'", $str);
     }
 
 }

@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Services\ImportProductByAPIService;
+use App\Jobs\ImportProductsJob;
 use Illuminate\Console\Command;
 
 class ImportProductService extends Command
@@ -29,7 +29,6 @@ class ImportProductService extends Command
     public function handle()
     {
         $id = str_replace("id=","",$this->argument('id'));
-        $service = new ImportProductByAPIService($id);
-        $service->process();
+        ImportProductsJob::dispatch($id);
     }
 }

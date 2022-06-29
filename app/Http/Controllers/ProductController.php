@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateProduct;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Http\Services\SearchProductService;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends Controller
@@ -29,14 +30,22 @@ class ProductController extends Controller
 
 
     /**
-     * Find any products
+     * Search products
      * @link /api/admin/products/search
      *
      * @param Request Object to request
      * @return json Object with response
      */
     public function search(Request $request){
-        //
+        try {
+
+            $service = new SearchProductService($request->all());
+            $service->process();
+
+            return response($service->output, Response::HTTP_OK);
+        } catch (\Throwable $th) {
+            return $this->returnGenericError($th);
+        }
     }
 
     /**
@@ -47,7 +56,11 @@ class ProductController extends Controller
      * @return json Object with response
      */
     public function show(Product $product){
-        return new ProductResource($product);
+        try {
+            return new ProductResource($product);
+        } catch (\Throwable $th) {
+            return $this->returnGenericError($th);
+        }
     }
 
     /**

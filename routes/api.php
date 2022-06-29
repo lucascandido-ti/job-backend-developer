@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 //Test
 Route::prefix('admin')->group(function () {
+    Route::post('products/search', [ProductController::class,'search'])->name("products.seach");
     Route::apiResource('products', ProductController::class);
 });
 

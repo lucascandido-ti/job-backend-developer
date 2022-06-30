@@ -1,0 +1,113 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Yampi Test App",
+		"_postman_id": "c5df9928-caeb-d72f-018d-1ce15a67b1dd",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create new Product",
+			"request": {
+				"url": "http://127.0.0.1:8000/api/admin/products",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Product name\",\n    \"price\": 100.0,\n    \"description\": \"Product description\",\n    \"category\": \"Category\",\n    \"image_url\": \"URL image\"\n}"
+				},
+				"description": "\r\nThis endpoint will insert a new product into the system"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Product",
+			"request": {
+				"url": "http://127.0.0.1:8000/api/admin/products/{{product_id}}",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"New Product name\",\n    \"price\": 100.0,\n    \"description\": \"New Product description\",\n    \"category\": \"New Category\",\n    \"image_url\": \"New URL image\"\n}"
+				},
+				"description": "This endpoint will update the data of a product"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Product",
+			"request": {
+				"url": "http://127.0.0.1:8000/api/admin/products/{{product_id}}",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": "This endpoint will delete a product from the system"
+			},
+			"response": []
+		},
+		{
+			"name": "List All Products",
+			"request": {
+				"url": "http://127.0.0.1:8000/api/admin/products",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "This endpoint will list all products on the system"
+			},
+			"response": []
+		},
+		{
+			"name": "Get specific product",
+			"request": {
+				"url": "http://127.0.0.1:8000/api/admin/products/{{product_id}}",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "This endpoint will fetch a specific product"
+			},
+			"response": []
+		},
+		{
+			"name": "Detailed product search",
+			"request": {
+				"url": "http://127.0.0.1:8000/api/admin/products/search",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 1,\n    \"name\": \"Product Name\",\n    \"price\": 100.00,\n    \"description\": \"Product description\",\n    \"category\": \"Product category\",\n    \"with_image\": \"0 = no image; 1 = with image\"\n}"
+				},
+				"description": "This endpoint will do a detailed product search"
+			},
+			"response": []
+		}
+	]
+}

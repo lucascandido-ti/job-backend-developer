@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ProductCreatedEvent;
+use App\Events\ProductUpdatedEvent;
 use App\Http\Requests\RegisterProduct;
 use App\Http\Requests\UpdateProduct;
 use App\Http\Resources\ProductResource;
@@ -84,7 +86,8 @@ class ProductController extends Controller
         try {
 
             $product = Product::create($request->only('name','price','description','category','image_url'));
-            Cache::forget('registered_products');
+            event(new ProductCreatedEvent($product));
+            event(new ProductUpdatedEvent);
 
             return response(new ProductResource($product), Response::HTTP_CREATED);
 
@@ -104,7 +107,7 @@ class ProductController extends Controller
         try {
 
             $product->update($request->only('name','price','description','category','image_url'));
-            Cache::forget('registered_products');
+            event(new ProductUpdatedEvent);
 
             return response(new ProductResource($product), Response::HTTP_ACCEPTED);
 
@@ -124,7 +127,7 @@ class ProductController extends Controller
         try {
 
             $product->delete();
-            Cache::forget('registered_products');
+            event(new ProductUpdatedEvent);
             
             return response(null, Response::HTTP_NO_CONTENT);
             

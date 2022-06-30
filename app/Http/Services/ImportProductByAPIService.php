@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Events\ProductUpdatedEvent;
 use App\Http\Repository\ExternalAPIRepository;
 use App\Models\Product;
 use Illuminate\Support\Facades\Cache;
@@ -24,7 +25,7 @@ class ImportProductByAPIService{
             $this->uploadProduct($product);
         }
 
-        Cache::forget('registered_products');
+        event(new ProductUpdatedEvent);
     }
 
     private function uploadProduct($data){

@@ -21,7 +21,7 @@ class ProductCreatedListener
         Mail::send('mail-product-created',["product"=>$event->product],function($m){
             $m->from("teste@teste.com.br");
             $m->to("teste@teste.com.br");
-            $m->subject("Created new product");
+            $m->subject("Updated product");
         });
     }
 }

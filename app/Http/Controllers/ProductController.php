@@ -107,6 +107,7 @@ class ProductController extends Controller
         try {
 
             $product->update($request->only('name','price','description','category','image_url'));
+            event(new ProductCreatedEvent($product));
             event(new ProductUpdatedEvent);
 
             return response(new ProductResource($product), Response::HTTP_ACCEPTED);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\ProductCreatedEvent;
 use App\Events\ProductUpdatedEvent;
+use App\Http\Repository\ProductRepository;
 use App\Http\Requests\RegisterProduct;
 use App\Http\Requests\UpdateProduct;
 use App\Http\Resources\ProductResource;
@@ -26,15 +27,26 @@ class ProductController extends Controller
     public function index(){
         try {
             
-            if(Cache::has('registered_products')){
-                return Cache::get('registered_products');
-            }
-
-            $products = ProductResource::collection(Product::all());
-            Cache::put('registered_products', $products, 60);
-
+            $products = ProductRepository::findAll();
             return $products;
             
+        } catch (\Throwable $th) {
+            return $this->returnGenericError($th);
+        }
+    }
+
+
+    /**
+     * Get product on database
+     * @link /api/admin/products/show
+     *
+     * @param Request Object to request
+     * @return json Object with response
+     */
+    public function show(Product $product){
+        try {
+            $product = ProductRepository::find($product);
+            return response($product, Response::HTTP_OK);
         } catch (\Throwable $th) {
             return $this->returnGenericError($th);
         }
@@ -51,25 +63,9 @@ class ProductController extends Controller
     public function search(Request $request){
         try {
 
-            $service = new SearchProductService($request->all());
-            $service->process();
+            $products = ProductRepository::searchProducts($request);
+            return response($products, Response::HTTP_OK);
 
-            return response($service->output, Response::HTTP_OK);
-        } catch (\Throwable $th) {
-            return $this->returnGenericError($th);
-        }
-    }
-
-    /**
-     * Get product on database
-     * @link /api/admin/products/show
-     *
-     * @param Request Object to request
-     * @return json Object with response
-     */
-    public function show(Product $product){
-        try {
-            return new ProductResource($product);
         } catch (\Throwable $th) {
             return $this->returnGenericError($th);
         }
@@ -85,17 +81,15 @@ class ProductController extends Controller
     public function store(RegisterProduct $request){
         try {
 
-            $product = Product::create($request->only('name','price','description','category','image_url'));
-            event(new ProductCreatedEvent($product));
-            event(new ProductUpdatedEvent);
-
-            return response(new ProductResource($product), Response::HTTP_CREATED);
+            $product = ProductRepository::store($request);
+            return response($product, Response::HTTP_CREATED);
 
         } catch (\Throwable $th) {
             return $this->returnGenericError($th);
         }
     }
 
+    
     /**
      * Updated Product on database
      * @link /api/admin/products/update
@@ -106,17 +100,15 @@ class ProductController extends Controller
     public function update(UpdateProduct $request, Product $product){
         try {
 
-            $product->update($request->only('name','price','description','category','image_url'));
-            event(new ProductCreatedEvent($product));
-            event(new ProductUpdatedEvent);
-
-            return response(new ProductResource($product), Response::HTTP_ACCEPTED);
+            $product = ProductRepository::updateProduct($request, $product);
+            return response($product, Response::HTTP_ACCEPTED);
 
         } catch (\Throwable $th) {
             return $this->returnGenericError($th);
         }
     }
 
+    
     /**
      * Delete Product on database
      * @link /api/admin/products/store
@@ -127,13 +119,14 @@ class ProductController extends Controller
     public function destroy(Product $product){
         try {
 
-            $product->delete();
-            event(new ProductUpdatedEvent);
-            
-            return response(null, Response::HTTP_NO_CONTENT);
+            $product = ProductRepository::deleteProduct($product);
+            return response($product, Response::HTTP_NO_CONTENT);
             
         } catch (\Throwable $th) {
             return $this->returnGenericError($th);
         }
     }
+
+
+
 }

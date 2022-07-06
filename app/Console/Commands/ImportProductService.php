@@ -12,7 +12,7 @@ class ImportProductService extends Command
      *
      * @var string
      */
-    protected $signature = 'products:import {id=0}';
+    protected $signature = 'products:import {--id=0}';
 
     /**
      * The console command description.
@@ -28,7 +28,6 @@ class ImportProductService extends Command
      */
     public function handle()
     {
-        $id = str_replace("id=","",$this->argument('id'));
-        ImportProductsJob::dispatch($id);
+        ImportProductsJob::dispatch($this->option('id'));
     }
 }

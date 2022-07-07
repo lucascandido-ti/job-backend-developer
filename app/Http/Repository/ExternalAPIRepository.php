@@ -7,9 +7,15 @@ use Illuminate\Support\Facades\Http;
 class ExternalAPIRepository{
     private string $api_url = "https://fakestoreapi.com/";
 
-    public function getProducts($id = 0){
+    public function getAll(){
+        $endpoint = "products";
+        $response = $this->getRequest($endpoint);
 
-        $endpoint = "products".($id != 0 ? "/".$id : "");
+        return $response->body();
+    }
+
+    public function findById($id){
+        $endpoint = "products/".$id;
         $response = $this->getRequest($endpoint);
 
         return $response->body();

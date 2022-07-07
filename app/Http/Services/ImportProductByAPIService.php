@@ -25,7 +25,6 @@ class ImportProductByAPIService{
             $this->uploadProduct($product);
         }
 
-        event(new ProductUpdatedEvent);
     }
 
     private function uploadProduct($data){
@@ -59,7 +58,11 @@ class ImportProductByAPIService{
 
     private function processAndFormatResult($service){
 
-        $products = json_decode($service->getProducts($this->product_id));
+        if($this->product_id != 0){
+            $products = json_decode($service->findById($this->product_id));
+        }else{
+            $products = json_decode($service->getAll($this->product_id));
+        }
 
         if(is_object($products)){
             $products = [$products];

@@ -16,10 +16,13 @@ class ProductRepository extends Model{
     
 
     public static function find(Product $product){
+
         return new ProductResource($product);
+        
     }
 
     public static function findAll(){
+
         if(Cache::has('registered_products')){
             return Cache::get('registered_products');
         }
@@ -28,35 +31,36 @@ class ProductRepository extends Model{
         Cache::put('registered_products', $products, 60);
 
         return $products;
+
     }
 
     public static function searchProducts(Request $request){
+
         $service = new SearchProductService($request->all());
         $service->process();
 
         return $service->output;
+
     }
 
     public static function store(Request $request){
-        $product = Product::create($request->only('name','price','description','category','image_url'));
-        event(new ProductCreatedEvent($product));
-        event(new ProductUpdatedEvent);
 
+        $product = Product::create($request->only('name','price','description','category','image_url'));
         return new ProductResource($product);
+
     }
 
     public static function updateProduct(UpdateProduct $request, Product $product){
-        
-        $product->update($request->only('name','price','description','category','image_url'));
-        event(new ProductCreatedEvent($product));
-        event(new ProductUpdatedEvent);
 
+        $product->update($request->only('name','price','description','category','image_url'));
         return new ProductResource($product);
+
     }
 
     public static function deleteProduct(Product $product){
+
         $product->delete();
-        event(new ProductUpdatedEvent);
         return null;
+
     }
 }

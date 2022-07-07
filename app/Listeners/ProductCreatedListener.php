@@ -5,6 +5,7 @@ namespace App\Listeners;
 use App\Models\Product;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
 
 class ProductCreatedListener
@@ -21,7 +22,8 @@ class ProductCreatedListener
         Mail::send('mail-product-created',["product"=>$event->product],function($m){
             $m->from("teste@teste.com.br");
             $m->to("teste@teste.com.br");
-            $m->subject("Updated product");
+            $m->subject("Product Create");
         });
+        Cache::forget('registered_products');
     }
 }
